@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}Structura — ввод требования{% endblock %}
+
+{% block content %}
+<section class="card">
+  <h1>Опишите бизнес-требование</h1>
+  <p class="muted">
+    Введите сырое требование — Structura сгенерирует ТЗ, User Story,
+    Acceptance Criteria, декомпозицию задач по ролям, тест-кейсы
+    и список рисков.
+  </p>
+
+  {% if error %}
+  <div class="alert alert-error">{{ error }}</div>
+  {% endif %}
+
+  <form method="post" action="/generate" class="form">
+    <label for="requirement">Требование</label>
+    <textarea
+      id="requirement"
+      name="requirement"
+      rows="10"
+      placeholder="Например: добавить на карточку товара блок сопутствующих товаров"
+      required
+    >{{ requirement }}</textarea>
+
+    <button type="submit" class="btn btn-primary">Сгенерировать</button>
+  </form>
+</section>
+{% endblock %}
