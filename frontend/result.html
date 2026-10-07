@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+
+{% block title %}Structura — результат{% endblock %}
+
+{% block content %}
+<section class="result-header">
+  <h1>Готовый пакет документации</h1>
+  <a href="/" class="btn btn-secondary">← Новое требование</a>
+</section>
+
+<section class="card">
+  <h2>Исходное требование</h2>
+  <p class="muted">{{ result.raw_requirement }}</p>
+</section>
+
+<section class="card">
+  <h2>Техническое задание</h2>
+  <p><strong>Цель:</strong> {{ result.tech_spec.goal }}</p>
+  <p><strong>Scope:</strong> {{ result.tech_spec.scope }}</p>
+  {% if result.tech_spec.constraints %}
+  <p><strong>Ограничения:</strong></p>
+  <ul>
+    {% for c in result.tech_spec.constraints %}
+    <li>{{ c }}</li>
+    {% endfor %}
+  </ul>
+  {% endif %}
+</section>
+
+<section class="card">
+  <h2>User Stories</h2>
+  {% for us in result.user_stories %}
+  <div class="item">
+    <p><strong>Как</strong> {{ us.role }}, <strong>я хочу</strong> {{ us.action }}, <strong>чтобы</strong> {{ us.value }}.</p>
+  </div>
+  {% endfor %}
+</section>
+
+<section class="card">
+  <h2>Acceptance Criteria</h2>
+  {% for ac in result.acceptance_criteria %}
+  <div class="item">
+    <p><strong>{{ ac.ac_id }}</strong> <span class="badge badge-{{ ac.type }}">{{ ac.type }}</span></p>
+    <ul class="ac-list">
+      <li><strong>GIVEN</strong> {{ ac.given }}</li>
+      <li><strong>WHEN</strong> {{ ac.when }}</li>
+      <li><strong>THEN</strong> {{ ac.then }}</li>
+    </ul>
+  </div>
+  {% endfor %}
+</section>
+
+<section class="card">
+  <h2>Декомпозиция задач по ролям</h2>
+  {% for role in ["designer", "frontend", "backend", "qa"] %}
+    {% set role_tasks = result.tasks | selectattr("role.value", "equalto", role) | list %}
+    {% if role_tasks %}
+    <h3 class="role-title">{{ role }}</h3>
+    <ul class="task-list">
+      {% for t in role_tasks %}
+      <li>
+        <strong>{{ t.title }}</strong> ({{ t.story_points }} SP)
+        <p class="muted">{{ t.description }}</p>
+      </li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+  {% endfor %}
+</section>
+
+<section class="card">
+  <h2>Тест-кейсы</h2>
+  {% for tc in result.test_cases %}
+  <div class="item">
+    <p><strong>{{ tc.name }}</strong> <span class="muted">({{ tc.ac_id }})</span></p>
+    <pre class="code"><code>{{ tc.code }}</code></pre>
+  </div>
+  {% endfor %}
+</section>
+
+{% if result.risks_and_questions %}
+<section class="card">
+  <h2>Риски и вопросы</h2>
+  <ul>
+    {% for r in result.risks_and_questions %}
+    <li>{{ r }}</li>
+    {% endfor %}
+  </ul>
+</section>
+{% endif %}
+{% endblock %}
